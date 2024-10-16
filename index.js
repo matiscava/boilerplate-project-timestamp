@@ -18,12 +18,32 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+const isInalidDate = (date) => date.toUTCString() === "Invalid Date";
+
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+app.get("/api/:date?", (req, res) => {
+  let date = new Date(req.params.date);
+  if(req.params.date === undefined){
+    date = new Date();
+    
+  }
+  const response = {};
+  if(isInalidDate(date))
+  {
+    date = new Date(+req.params.date);
+  }
+  isInalidDate(date)
+  ? res.send({error: "Invalid Date"})
+  : res.send({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
+})
 
 
 // Listen on port set in environment variable or default to 3000
